@@ -1,0 +1,89 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="./tailwind.config.js"></script>
+
+</head>
+<body class="bg-gradient-to-br from-forest-50 to-forest-100 min-h-screen font-sans">
+    <div class="container mx-auto px-4 py-12 max-w-md animate-fade-in">
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-forest-600 to-forest-800">
+                My To-Do List
+            </h1>
+            <p class="text-forest-700">Organize your day with clarity</p>
+        </div>
+        
+        <div class="bg-white/90 backdrop-blur-sm rounded-xl shadow-xl p-6 transition-all duration-300 hover:shadow-2xl hover:shadow-forest-200/50 border border-forest-100">
+            <form id="taskForm" class="mb-6">
+                <div class="flex space-x-2">
+                    <input type="text" id="taskInput" 
+                           class="flex-grow px-4 py-3 border-2 border-forest-200 rounded-lg focus:outline-none focus:border-forest-500 focus:ring-2 focus:ring-forest-300 focus:shadow-inner-glow transition-all placeholder-forest-300"
+                           placeholder="What needs to be done?" required>
+                    <button type="submit" 
+                            class="bg-gradient-to-r from-forest-500 to-forest-600 text-white px-6 py-3 rounded-lg hover:from-forest-600 hover:to-forest-700 transition-all duration-300 shadow-md hover:shadow-glow active:scale-95 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+                        </svg>
+                        Add
+                    </button>
+                </div>
+            </form>
+            
+            <ul id="taskList" class="space-y-3">
+                <!-- Sample task for demonstration -->
+                <li
+                    class="flex items-center justify-between p-3 bg-forest-50 rounded-lg border border-forest-100 hover:bg-forest-100/50 transition-all group">
+                    <div class="flex items-center">
+                        <!-- Cambia el checkbox de ejemplo a: -->
+                        <input type="checkbox"
+                            class="h-5 w-5 text-forest-600 rounded border-forest-300 focus:ring-forest-500 mr-3 task-checkbox"
+                            data-id="0"> <span class="text-forest-800">Sample task</span>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button class="text-forest-500 hover:text-forest-700 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path
+                                    d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                            </svg>
+                        </button>
+                        <button class="text-forest-500 hover:text-forest-700 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                    </div>
+                </li>
+            </ul>
+            
+            <div class="mt-6 pt-4 border-t border-forest-100 text-sm text-forest-500 flex justify-between">
+                <span id="taskCount">0 tasks</span>
+                <button id="clearCompleted" class="text-forest-600 hover:text-forest-800 hover:underline transition">Clear completed</button>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+        
+        /* Custom checkbox style */
+        input[type="checkbox"]:checked {
+            background-color: #379261;
+            border-color: #379261;
+            background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M5.707 7.293a1 1 0 0 0-1.414 1.414l2 2a1 1 0 0 0 1.414 0l4-4a1 1 0 0 0-1.414-1.414L7 8.586 5.707 7.293z'/%3e%3c/svg%3e");
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+    </style>
+
+  <script type="module" src="./src/app.js"></script>
+</body>
+</html>               

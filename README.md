@@ -33,13 +33,9 @@ Ensure you have the following installed:
 ### Installation
 To get a copy of the project up and running on your local machine, follow these steps:
 
--  **Option A: Clone the repository HTTPS:**
+-  **Clone the repository HTTPS:**
     ```bash
-    git clone https://github.com/idrobodev/todo-list-springboot-tailwind.git
-    ```
--  **Option B: Clone the repository SSH:**
-    ```bash
-    git clone git@github.com:idrobodev/todo-list-springboot-tailwind.git
+    git clone https://github.com/krjofficial/springboot-todo.git
     ```
 ---
 

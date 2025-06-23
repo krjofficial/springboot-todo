@@ -14,32 +14,32 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/tasks")
-@CrossOrigin(origins = "*") // Permite peticiones desde cualquier origen (útil para desarrollo)
+@CrossOrigin(origins = "*") // Allow requests from any origin (useful for development)
 public class TaskController {
 
     private final ITaskRepository repository;
 
-    public TaskController(ITaskRepository repository) {
+    public TaskController(ITaskRepository repository) { // contructor
         this.repository = repository;
     }
 
-    // Obtener todas las tareas ordenadas por ID
+   // Get all tasks sorted by ID
     @GetMapping
     public List<Task> getAllTasks() {
         return repository.findAllByOrderByIdAsc();
     }
 
-    // Crear una nueva tarea
+   // Create a new task
     @PostMapping
     public Task createTask(@RequestBody Task task) {
-        // Asegura que el estado completed sea false por defecto si no se especifica
+        // Ensure that the completed status is false by default if not specified
         if (task.getCompleted() == null) {
             task.setCompleted(false);
         }
         return repository.save(task);
     }
 
-    // Endpoint específico para cambiar solo el estado completed
+    // Specific endpoint to change only the completed status
     @PatchMapping("/{id}/completed")
     public ResponseEntity<Void> updateCompletedStatus(
             @PathVariable Long id,
@@ -58,12 +58,12 @@ public class TaskController {
         return ResponseEntity.ok().build();
     }
 
-    // Actualizar una tarea existente
+    // Update an existing task
     @PutMapping("/{id}")
     public Task updateTask(@PathVariable Long id, @RequestBody Task taskDetails) {
         return repository.findById(id)
                 .map(task -> {
-                    // Actualiza solo los campos permitidos
+                    // Update only the allowed fields
                     if (taskDetails.getTitle() != null) {
                         task.setTitle(taskDetails.getTitle());
                     }
@@ -75,13 +75,13 @@ public class TaskController {
                 .orElseThrow(() -> new RuntimeException("Task not found with id " + id));
     }
 
-    // Eliminar una tarea específica
+    // Delete a specific task
     @DeleteMapping("/{id}")
     public void deleteTask(@PathVariable Long id) {
         repository.deleteById(id);
     }
 
-    // Eliminar todas las tareas completadas (endpoint adicional)
+   // Delete all completed tasks (additional endpoint)
    @DeleteMapping("/clear_completed")
     public ResponseEntity<?> deleteCompletedTasks() {
         try {

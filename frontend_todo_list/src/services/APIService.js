@@ -1,22 +1,22 @@
 export class APIService {
   /**
-   * Constructor del Servicio API
-   * @param {string} baseUrl - URL base de la API
+   * API Service Constructor
+   * @param {string} baseUrl - Base URL of the API
    */
   constructor(baseUrl) {
-    this.baseUrl = baseUrl; // Almacena la URL base de la API
-    // Define los endpoints disponibles como funciones para construir URLs dinámicas
+    this.baseUrl = baseUrl; // Stores the base URL of the API
+    // Defines available endpoints as functions to build dynamic URLs
     this.endpoints = {
-      tasks: '', // Endpoint para todas las tareas
-      task: (id) => `/${id}`, // Endpoint para una tarea específica
-      taskStatus: (id) => `/${id}/completed`, // Endpoint para estado de tarea
-      clearCompleted: '/clear_completed' // Endpoint para limpiar completadas
+      tasks: '', // Endpoint for all tasks
+      task: (id) => `/${id}`, // Endpoint for a specific task
+      taskStatus: (id) => `/${id}/completed`, // Endpoint for task status
+      clearCompleted: '/clear_completed' // Endpoint to clear completed tasks
     };
   }
 
   /**
-   * Obtiene todas las tareas desde la API
-   * @returns {Promise<Array>} Lista de tareas
+   * Retrieves all tasks from the API
+   * @returns {Promise<Array>} List of tasks
    */
   async fetchTasks() {
     try {
@@ -25,108 +25,108 @@ export class APIService {
       return await response.json();
     } catch (error) {
       console.error('Error fetching tasks:', error);
-      throw error; // Relanza el error para que lo maneje el llamador
+      throw error; // Rethrow the error for the caller to handle
     }
   }
 
   /**
-   * Crea una nueva tarea
-   * @param {string} title - Título de la tarea
-   * @returns {Promise<Object>} Tarea creada
+   * Creates a new task
+   * @param {string} title - Task title
+   * @returns {Promise<Object>} Created task
    */
   async createTask(title) {
     return this._fetchWithHandling(
       this.baseUrl,
       'POST',
-      { title, completed: false } // Crea tareas como no completadas por defecto
+      { title, completed: false } // Creates tasks as incomplete by default
     );
   }
 
   /**
-   * Actualiza el título de una tarea existente
-   * @param {string} id - ID de la tarea a actualizar
-   * @param {string} title - Nuevo título
-   * @returns {Promise<Object>} Tarea actualizada
+   * Updates the title of an existing task
+   * @param {string} id - ID of the task to update
+   * @param {string} title - New title
+   * @returns {Promise<Object>} Updated task
    */
   async updateTask(id, title) {
     return this._fetchWithHandling(
       this.baseUrl + this.endpoints.task(id),
       'PUT',
-      { title } // Solo actualiza el título
+      { title } // Only updates the title
     );
   }
 
   /**
-   * Cambia el estado de completado de una tarea
-   * @param {string} id - ID de la tarea
-   * @param {boolean} completed - Nuevo estado (true/false)
-   * @returns {Promise<Object>} Tarea actualizada
+   * Changes the completed status of a task
+   * @param {string} id - Task ID
+   * @param {boolean} completed - New status (true/false)
+   * @returns {Promise<Object>} Updated task
    */
   async toggleTaskCompletion(id, completed) {
     return this._fetchWithHandling(
       this.baseUrl + this.endpoints.taskStatus(id),
       'PATCH',
-      { completed } // Solo actualiza el estado
+      { completed } // Only updates the status
     );
   }
 
   /**
-   * Elimina una tarea específica
-   * @param {string} id - ID de la tarea a eliminar
-   * @returns {Promise<Object>} Resultado de la operación
+   * Deletes a specific task
+   * @param {string} id - ID of the task to delete
+   * @returns {Promise<Object>} Result of the operation
    */
   async deleteTask(id) {
     return this._fetchWithHandling(
       this.baseUrl + this.endpoints.task(id),
-      'DELETE' // No necesita body
+      'DELETE' // No body needed
     );
   }
 
   /**
-   * Elimina todas las tareas completadas
-   * @returns {Promise<Object>} Información sobre las tareas eliminadas
+   * Deletes all completed tasks
+   * @returns {Promise<Object>} Information about the deleted tasks
    */
   async clearCompletedTasks() {
     return this._fetchWithHandling(
       this.baseUrl + this.endpoints.clearCompleted,
-      'DELETE' // No necesita body
+      'DELETE' // No body needed
     );
   }
 
   /**
-   * Método interno para manejar todas las peticiones fetch con manejo de errores
-   * @param {string} url - URL completa del endpoint
-   * @param {string} method - Método HTTP (GET, POST, PUT, etc.)
-   * @param {Object|null} body - Datos a enviar en el cuerpo (opcional)
-   * @returns {Promise<Object>} Respuesta de la API
+   * Internal method to handle all fetch requests with error handling
+   * @param {string} url - Full endpoint URL
+   * @param {string} method - HTTP method (GET, POST, PUT, etc.)
+   * @param {Object|null} body - Data to send in the body (optional)
+   * @returns {Promise<Object>} API response
    * @private
    */
   async _fetchWithHandling(url, method, body = null) {
     try {
-      // Configuración básica de la petición
+      // Basic request configuration
       const options = {
         method,
         headers: { 'Content-Type': 'application/json' }
       };
       
-      // Si hay body, lo convierte a JSON y lo añade
+      // If there's a body, convert it to JSON and add it
       if (body) {
         options.body = JSON.stringify(body);
       }
 
       const response = await fetch(url, options);
       
-      // Si la respuesta no es OK, extrae el mensaje de error
+      // If the response is not OK, extract the error message
       if (!response.ok) {
         const error = await response.json().catch(() => ({}));
         throw new Error(error.message || `Request failed with status ${response.status}`);
       }
 
-      // Intenta parsear la respuesta como JSON, si falla devuelve objeto vacío
+      // Try to parse the response as JSON, return empty object if it fails
       return await response.json().catch(() => ({}));
     } catch (error) {
       console.error(`Error in ${method} request:`, error);
-      throw error; // Relanza el error para manejo superior
+      throw error; // Rethrow the error for higher-level handling
     }
   }
 }

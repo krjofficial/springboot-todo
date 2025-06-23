@@ -1,87 +1,87 @@
 export class TaskController {
   /**
-   * Constructor del Controlador de Tareas
-   * @param {Object} apiService - Servicio para interactuar con la API
-   * @param {Object} view - Vista para interactuar con la interfaz de usuario
+   * Task Controller Constructor
+   * @param {Object} apiService - Service to interact with the API
+   * @param {Object} view - View to interact with the user interface
    */
   constructor(apiService, view) {
-    this.apiService = apiService; // Servicio para llamadas a la API
-    this.view = view; // Vista para manipular el DOM
+    this.apiService = apiService; // Service for API calls
+    this.view = view; // View to manipulate the DOM
     this.state = {
-      currentlyEditingId: null, // ID de la tarea en edición
-      originalTitle: '' // Título original antes de editar
+      currentlyEditingId: null, // ID of the task being edited
+      originalTitle: '' // Original title before editing
     };
   }
 
   /**
-   * Inicializa el controlador cargando tareas y configurando eventos
+   * Initializes the controller by loading tasks and setting up events
    */
   init() {
-    this.loadTasks(); // Carga las tareas iniciales
-    this.setupEventListeners(); // Configura los event listeners
+    this.loadTasks(); // Load initial tasks
+    this.setupEventListeners(); // Set up event listeners
   }
 
   /**
-   * Configura los event listeners para los elementos de la interfaz
+   * Sets up event listeners for UI elements
    */
   setupEventListeners() {
-    // Evento para el formulario de añadir/editar tarea
+    // Event for the add/edit task form
     this.view.elements.taskForm.addEventListener('submit', this.handleFormSubmit.bind(this));
-    // Evento para el botón de limpiar tareas completadas
+    // Event for the button to clear completed tasks
     this.view.elements.clearCompleted.addEventListener('click', this.handleClearCompleted.bind(this));
-    // Eventos para la lista de tareas (clicks y cambios)
+    // Events for the task list (clicks and changes)
     this.view.elements.taskList.addEventListener('click', this.handleTaskListClick.bind(this));
     this.view.elements.taskList.addEventListener('change', this.handleTaskCheckboxChange.bind(this));
   }
 
   /**
-   * Carga las tareas desde la API y las muestra en la interfaz
+   * Loads tasks from the API and displays them in the UI
    */
   async loadTasks() {
     try {
-      const tasks = await this.apiService.fetchTasks(); // Obtiene tareas de la API
-      this.view.renderTasks(tasks, this.state.currentlyEditingId); // Renderiza las tareas
-      this.view.updateTaskCounter(tasks); // Actualiza el contador
+      const tasks = await this.apiService.fetchTasks(); // Get tasks from the API
+      this.view.renderTasks(tasks, this.state.currentlyEditingId); // Render tasks
+      this.view.updateTaskCounter(tasks); // Update the counter
     } catch (error) {
       this.view.showNotification('Error loading tasks. Please refresh the page.', 'error');
     }
   }
 
   /**
-   * Maneja el envío del formulario para crear/actualizar tareas
-   * @param {Event} e - Evento de submit
+   * Handles form submission for creating/updating tasks
+   * @param {Event} e - Submit event
    */
   async handleFormSubmit(e) {
     e.preventDefault();
-    const title = this.view.elements.taskInput.value.trim(); // Obtiene el título de la tarea
+    const title = this.view.elements.taskInput.value.trim(); // Get the task title
     
-    if (!title) return; // Valida que no esté vacío
+    if (!title) return; // Validate that it's not empty
 
     try {
       if (this.state.currentlyEditingId) {
-        // Si estamos editando, actualiza la tarea existente
+        // If we are editing, update the existing task
         await this.apiService.updateTask(this.state.currentlyEditingId, title);
-        this.resetEditMode(); // Sale del modo edición
+        this.resetEditMode(); // Exit edit mode
       } else {
-        // Si no, crea una nueva tarea
+        // Otherwise, create a new task
         await this.apiService.createTask(title);
-        this.view.resetInput(); // Limpia el input
+        this.view.resetInput(); // Clear the input
       }
-      this.loadTasks(); // Recarga las tareas
+      this.loadTasks(); // Reload tasks
     } catch (error) {
       this.view.showNotification('Error saving task. Please try again.', 'error');
     }
   }
 
   /**
-   * Maneja la eliminación de tareas completadas
+   * Handles deletion of completed tasks
    */
   async handleClearCompleted() {
     try {
       const result = await this.apiService.clearCompletedTasks();
       console.log(`Deleted ${result.deletedCount} tasks`);
       this.view.showNotification('Completed tasks cleared successfully!', 'success');
-      this.loadTasks(); // Recarga las tareas después de eliminar
+      this.loadTasks(); // Reload tasks after deletion
     } catch (error) {
       console.error('Error clearing completed tasks:', error);
       this.view.showNotification(error.message || 'Error clearing completed tasks. Please try again.', 'error');
@@ -89,38 +89,38 @@ export class TaskController {
   }
 
   /**
-   * Maneja los clics en la lista de tareas (editar, guardar, cancelar, eliminar)
-   * @param {Event} e - Evento de click
+   * Handles clicks in the task list (edit, save, cancel, delete)
+   * @param {Event} e - Click event
    */
   handleTaskListClick(e) {
-    // Si se hace clic en el botón de editar
+    // If edit button is clicked
     if (e.target.closest('.edit-btn')) {
       this.handleEditTask(e.target.closest('.edit-btn'));
       return;
     }
     
-    // Si se hace clic en el botón de guardar edición
+    // If save edit button is clicked
     if (e.target.closest('.save-edit-btn')) {
       this.handleSaveEdit(e.target.closest('.save-edit-btn'));
       return;
     }
     
-    // Si se hace clic en el botón de cancelar edición
+    // If cancel edit button is clicked
     if (e.target.closest('.cancel-edit-btn')) {
       this.resetEditMode();
       this.loadTasks();
       return;
     }
     
-    // Si se hace clic en el botón de eliminar
+    // If delete button is clicked
     if (e.target.closest('.delete-btn')) {
       this.handleDeleteTask(e.target.closest('.delete-btn'));
     }
   }
 
   /**
-   * Maneja el cambio de estado (completado/no completado) de una tarea
-   * @param {Event} e - Evento de cambio
+   * Handles task status change (completed/incomplete)
+   * @param {Event} e - Change event
    */
   async handleTaskCheckboxChange(e) {
     if (!e.target.classList.contains('task-checkbox')) return;
@@ -131,16 +131,16 @@ export class TaskController {
     const originalState = !isCompleted;
 
     try {
-      // Actualiza el estado en la API
+      // Update the status in the API
       await this.apiService.toggleTaskCompletion(taskId, isCompleted);
-      // Actualiza la interfaz
+      // Update the UI
       this.view.updateTaskInUI(taskId, isCompleted);
       this.updateTaskCounter();
     } catch (error) {
       console.error('Update failed:', error);
-      checkbox.checked = originalState; // Revierte el cambio si falla
+      checkbox.checked = originalState; // Revert the change if it fails
       
-      // Muestra mensaje de error apropiado
+      // Show appropriate error message
       const errorMsg = error.message.includes('Failed to fetch')
         ? 'Network error. Please check your connection.'
         : `Update failed: ${error.message}`;
@@ -150,26 +150,26 @@ export class TaskController {
   }
 
   /**
-   * Maneja la edición de una tarea
-   * @param {HTMLElement} button - Botón de editar que fue clickeado
+   * Handles editing of a task
+   * @param {HTMLElement} button - Edit button that was clicked
    */
   async handleEditTask(button) {
     const taskId = button.dataset.id;
     const taskElement = button.closest('li');
     const taskTitle = taskElement.querySelector('span').textContent;
     
-    // Actualiza el estado para entrar en modo edición
+    // Update state to enter edit mode
     this.state.currentlyEditingId = taskId;
     this.state.originalTitle = taskTitle;
-    this.view.elements.taskInput.value = taskTitle; // Muestra el título en el input
-    this.view.focusInput(); // Enfoca el input
-    this.view.updateSubmitButton('Update'); // Cambia el texto del botón
-    this.loadTasks(); // Recarga las tareas para mostrar los controles de edición
+    this.view.elements.taskInput.value = taskTitle; // Show title in input
+    this.view.focusInput(); // Focus the input
+    this.view.updateSubmitButton('Update'); // Change button text
+    this.loadTasks(); // Reload tasks to show edit controls
   }
 
   /**
-   * Maneja el guardado de una edición de tarea
-   * @param {HTMLElement} button - Botón de guardar que fue clickeado
+   * Handles saving of an edited task
+   * @param {HTMLElement} button - Save button that was clicked
    */
   async handleSaveEdit(button) {
     const taskId = button.dataset.id;
@@ -179,8 +179,8 @@ export class TaskController {
     if (newTitle) {
       try {
         await this.apiService.updateTask(taskId, newTitle);
-        this.resetEditMode(); // Sale del modo edición
-        this.loadTasks(); // Recarga las tareas
+        this.resetEditMode(); // Exit edit mode
+        this.loadTasks(); // Reload tasks
       } catch (error) {
         this.view.showNotification('Error updating task. Please try again.', 'error');
       }
@@ -188,32 +188,32 @@ export class TaskController {
   }
 
   /**
-   * Maneja la eliminación de una tarea
-   * @param {HTMLElement} button - Botón de eliminar que fue clickeado
+   * Handles deletion of a task
+   * @param {HTMLElement} button - Delete button that was clicked
    */
   async handleDeleteTask(button) {
     if (!confirm('Are you sure you want to delete this task?')) return;
     
     try {
       await this.apiService.deleteTask(button.dataset.id);
-      this.loadTasks(); // Recarga las tareas después de eliminar
+      this.loadTasks(); // Reload tasks after deletion
     } catch (error) {
       this.view.showNotification('Error deleting task. Please try again.', 'error');
     }
   }
 
   /**
-   * Resetea el modo de edición
+   * Resets edit mode
    */
   resetEditMode() {
     this.state.currentlyEditingId = null;
     this.state.originalTitle = '';
-    this.view.resetInput(); // Limpia el input
-    this.view.updateSubmitButton('Add'); // Restaura el texto del botón
+    this.view.resetInput(); // Clear the input
+    this.view.updateSubmitButton('Add'); // Restore button text
   }
 
   /**
-   * Actualiza el contador de tareas
+   * Updates the task counter
    */
   async updateTaskCounter() {
     try {

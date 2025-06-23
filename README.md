@@ -33,13 +33,9 @@ Ensure you have the following installed:
 ### Installation
 To get a copy of the project up and running on your local machine, follow these steps:
 
--  **Option A: Clone the repository HTTPS:**
+-  **Clone the repository HTTPS:**
     ```bash
-    git clone https://github.com/idrobodev/todo-list-springboot-tailwind.git
-    ```
--  **Option B: Clone the repository SSH:**
-    ```bash
-    git clone git@github.com:idrobodev/todo-list-springboot-tailwind.git
+    git clone https://github.com/krjofficial/springboot-todo.git
     ```
 ---
 
@@ -92,18 +88,18 @@ The project is organized into `backend` and `frontend` directories:
 ```
 ├── backend_todo_list/                 # Spring Boot Backend
 │   ├── src/main/java/com/todo/todo_list/
-│   │   ├── controller/                # Controlador REST
-│   │   ├── model/                     # Entidad JPA
-│   │   ├── repository/                # Repositorio de datos
-│   │   └── TodoListApplication.java   # Clase principal
-│   └── resources/application.properties # Configuración H2
+│   │   ├── controller/                # REST Controller
+│   │   ├── model/                     # JPA Entity
+│   │   ├── repository/                # Data Repository
+│   │   └── TodoListApplication.java   # Main Application Class
+│   └── resources/application.properties # H2 DataBase Configuration
 │
 └── frontend_todo_list/                # Frontend JavaScript
     ├── src/
-    │   ├── controllers/               # Lógica de control
-    │   ├── services/                  # Comunicación API
-    │   └── views/                     # Componentes UI
-    └── index.html                     # Punto de entrada
+    │   ├── controllers/               # UI Control Logic
+    │   ├── services/                  # API Communication
+    │   └── views/                     # UI Components
+    └── index.html                     # Entry Point
 ```
 
 ---
